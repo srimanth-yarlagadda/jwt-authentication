@@ -1,5 +1,6 @@
 package com.jwtauth.services;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -7,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Service
+@Scope("singleton")
 public class Database {
 
     private static Connection finalConn;

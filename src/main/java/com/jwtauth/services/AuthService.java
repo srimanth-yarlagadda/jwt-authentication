@@ -18,7 +18,7 @@ public class AuthService {
         this.connection = connection;
     }
 
-    public boolean validateUser(String user, String password) throws SQLException {
+    public String validateUser(String user, String password) throws SQLException {
         PreparedStatement statement = connection.acquire().prepareStatement("select * from Person where userID = ?");
         statement.setString(1, user);
         ResultSet userList = statement.executeQuery();
@@ -29,11 +29,38 @@ public class AuthService {
 
             // Do something with the data
             System.out.println(name + " " + role);
-            return true;
+            return role;
         } else {
-            return false;
+            return "";
         }
 
+    }
+
+    public Integer addProduct(String category, String ProductName, Float Price) throws SQLException {
+        PreparedStatement statement = connection.acquire().prepareStatement("select max(productID) as mid from Product");
+        ResultSet maxPL = statement.executeQuery();
+        Integer mid = 1;
+        while (maxPL.next()) {
+            mid = maxPL.getInt("mid");
+        }
+        System.out.println("add prod " + (mid+1));
+
+        String instStatement = "INSERT INTO Product (productID, category, ProductName, Price) VALUES (?, ?, ?, ?)";
+        statement = connection.acquire().prepareStatement(instStatement);
+        statement.setInt(1, mid+1);
+        statement.setString(2, category);
+        statement.setString(3, ProductName);
+        statement.setFloat(4, Price);
+        Integer rowsInserted = statement.executeUpdate();
+        return rowsInserted;
+    }
+
+    public Integer deleteProduct(Integer productID) throws SQLException {
+        String delst = "DELETE FROM Product WHERE productID = ?";
+        PreparedStatement statement = connection.acquire().prepareStatement(delst);
+        statement.setInt(1, productID);
+        Integer rowsAff = statement.executeUpdate();
+        return rowsAff;
     }
 
 }
