@@ -3,7 +3,7 @@ package com.jwtauth.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("/")
+@RequestMapping("/status")
 public class StatusController {
 
     @RequestMapping(method = RequestMethod.GET)

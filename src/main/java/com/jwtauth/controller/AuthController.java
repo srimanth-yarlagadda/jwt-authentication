@@ -8,6 +8,8 @@ import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -17,8 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 
-@RestController
-@RequestMapping("/api/auth")
+@Controller
+@RequestMapping("/")
 public class AuthController {
 
     private final AuthService authService;
@@ -29,8 +31,13 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String idUser(@RequestParam String user, @RequestParam String password) throws IOException, SQLException {
+    @GetMapping("/")
+    public String authPage() {
+        return "auth";
+    }
+
+    @PostMapping("/auth")
+    public String idUser(@RequestParam String user, @RequestParam String password, Model model) throws IOException, SQLException {
         String role = authService.validateUser(user, password);
         if (!role.equals("")) {
             Claims claims = Jwts.claims().setSubject(user);
@@ -39,7 +46,8 @@ public class AuthController {
                     .claim("roles", role)
                     .setIssuedAt(new Date())
                     .signWith(SignatureAlgorithm.HS256, "secret");
-            return builder.compact();
+            model.addAttribute("jsonData", builder.compact());
+            return "responseViewer";
         } else {
             return "Auth Failed " + user + " " + password;
         }
